@@ -1,0 +1,75 @@
+/* src/components/UpskillQuestion.css */
+.upskill-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Use full height to center vertically */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.question-box {
+  margin-bottom: 20px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.option-button {
+  border: none;
+  margin: 10px 0;
+  padding: 20px;
+  width: 80%; /* Adjust based on your design */
+  max-width: 300px; /* Adjust based on your design */
+  border-radius: 10px; /* Less rounded corners */
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.option-button.upskill {
+  background-color: #E0E0E0; /* Replace with your color */
+  color: #000000; /* Replace with your color */
+}
+
+.option-button.new-career {
+  background-color: #E0E0E0; /* Replace with your color */
+  color: #000000; /* Replace with your color */
+}
+
+.next-button-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.next-button {
+  background-color: #6200EE; /* Replace with your color */
+  color: #FFFFFF; /* Replace with your color */
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Add :hover effects for buttons if needed */
+.option-button:hover,
+.next-button:hover {
+  background-color: #3700B3; /* Darker shade for hover effect */
+}
+
+/* Media queries for responsiveness (if needed) */
+@media (max-width: 600px) {
+  .option-button {
+    width: 90%;
+  }
+}
