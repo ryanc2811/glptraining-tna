@@ -97,7 +97,7 @@ function DevelopmentAreasQuestion() {
             development_areas: selectedOptions,
         };
         // Example POST request with fetch
-        fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommendT', {
+        fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
