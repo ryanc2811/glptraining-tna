@@ -60,62 +60,42 @@ function DevelopmentAreasQuestion() {
 
 
     const handleSubmit = async () => {
-        // Get the current user's ID from Firebase Authentication
         const auth = getAuth();
         const user = auth.currentUser;
         const userUID = user ? user.uid : null;
-
+    
         setIsLoading(true); // Start loading
-        if (selectedOptions.length > 0) {
+        if (selectedOptions.length > 0 && userUID) {
             try {
-                // Your existing code to get the user's ID and check docId
-                if (userUID) {
-                    if (docId) {
-                        // Update user_tna document with selected development areas
-                        const userTnaRef = doc(db, 'user_tna', docId);
-                        await updateDoc(userTnaRef, {
-                            developmentAreas: selectedOptions,
-                        });
-
-                    }
-
-                } else {
-                    alert('No user is signed in.');
-                    navigate('/login');
-                }
+                const user_profile = {
+                    new_user_profile: {
+                        dev_areas_str: selectedOptions.join(" "), // Join the selected options into a single string
+                        business_area: businessAreaId,
+                    },
+                };
+    
+                // Update your fetch call to use the new structure
+                fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user_profile), // Send the modified user_profile object
+                })
+                .then(response => response.json())
+                .then(data => {
+                    navigate('/generate-questions', { state: { questions: data.recommendedQuestions } });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+                .finally(() => setIsLoading(false)); // Stop loading
+    
             } catch (err) {
                 console.error("Error adding/updating document: ", err);
             }
         } else {
             alert('Please select at least one option before submitting.');
+            setIsLoading(false); // Stop loading if there's an error
         }
-
-
-        console.log(selectedOptions);
-        const user_profile = {
-            business_area: businessAreaId,
-            development_areas: selectedOptions,
-        };
-        // Example POST request with fetch
-        fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user_profile),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                // Handle the response data
-                navigate('/generate-questions', { state: { questions: data.recommendedQuestions } });
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                setIsLoading(false); // Stop loading
-            });
-
     };
     return (
 
