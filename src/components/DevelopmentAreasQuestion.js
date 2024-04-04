@@ -82,7 +82,7 @@ function DevelopmentAreasQuestion() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    navigate('/generate-questions', { state: { questions: data.recommendedQuestions } });
+                    navigate('/', { state: { questions: data.recommendedQuestions } });
                 })
                 .catch(error => {
                     console.error('Error:', error);
