@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from joblib import load
 import pandas as pd
 import numpy as np
@@ -6,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 
 app = Flask(__name__)
-
+CORS(app)
 # Load the model from the file
 model = load('model.joblib')
 
