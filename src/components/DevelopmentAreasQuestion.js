@@ -15,6 +15,7 @@ function DevelopmentAreasQuestion() {
     const { userTnaId: docId, setUserTnaId, businessAreaId } = useContext(UserTnaContext);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [developmentAreas, setDevelopmentAreas] = useState([]);
+    const [business_area, setBusinessArea]= useState(null);
     // Add loading state
     const [isLoading, setIsLoading] = useState(false);
 
@@ -34,6 +35,7 @@ function DevelopmentAreasQuestion() {
                 if (docSnap.exists()) {
 
                     // Assuming 'key_development_areas' is the field that contains the array
+                    setBusinessArea(docSnap.data().title);
                     setDevelopmentAreas(docSnap.data().development_areas);
                 } else {
                     console.log("No such document!");
@@ -70,7 +72,7 @@ function DevelopmentAreasQuestion() {
                 const user_profile = {
                     new_user_profile: {
                         dev_areas_str: selectedOptions.join(" "), // Join the selected options into a single string
-                        business_area: businessAreaId,
+                        business_area: business_area
                     },
                 };
 
