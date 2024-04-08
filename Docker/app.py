@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from joblib import load
@@ -102,7 +103,7 @@ def get_recommendations(new_user_profile_dict):
 
 
 
-@app.route('/recommend', methods=['POST', 'OPTIONS'])
+@app.route('/recommend', methods=['POST'])
 @cross_origin()
 def recommend():
     data = request.json
