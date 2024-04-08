@@ -73,6 +73,8 @@ function DevelopmentAreasQuestion() {
                         business_area: businessAreaId,
                     },
                 };
+
+                console.log(JSON.stringify(user_profile));
     
                 // Update your fetch call to use the new structure
                 fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
