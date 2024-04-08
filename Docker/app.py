@@ -106,7 +106,9 @@ def recommend():
     data = request.json
     new_user_profile = data['new_user_profile']
     recommendations = get_recommendations(new_user_profile)
-    return jsonify(recommendations)
+    response =jsonify(recommendations)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 if __name__ == '__main__':
