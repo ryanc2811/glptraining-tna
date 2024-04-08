@@ -103,12 +103,12 @@ def get_recommendations(new_user_profile_dict):
 
 
 @app.route('/recommend', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def recommend():
     data = request.json
     new_user_profile = data['new_user_profile']
     recommendations = get_recommendations(new_user_profile)
     response =jsonify(recommendations)
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
