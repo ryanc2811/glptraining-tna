@@ -7,7 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 
 app = Flask(__name__)
-CORS(app, resources={r"/recommend*": {"origins": "*"}})
+# Enable CORS for all domains on all routes with automatic options responses.
+CORS(app, supports_credentials=True)
 # Load the model from the file
 model = load('model.joblib')
 
@@ -101,7 +102,7 @@ def get_recommendations(new_user_profile_dict):
 
 
 
-@app.route('/recommend', methods=['POST'])
+@app.route('/recommend', methods=['POST', 'OPTIONS'])
 def recommend():
     data = request.json
     new_user_profile = data['new_user_profile']
@@ -112,5 +113,4 @@ def recommend():
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host="0.0.0.0", port= 8080)
