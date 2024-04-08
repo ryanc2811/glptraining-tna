@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/recommend*": {"origins": "*"}})
 # Load the model from the file
 model = load('model.joblib')
 
