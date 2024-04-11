@@ -12,7 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 
 function DevelopmentAreasQuestion() {
-    const { userTnaId: docId, setUserTnaId, businessAreaId } = useContext(UserTnaContext);
+    const { setUserTnaId, userTnaId: docId, businessAreaId, setBusinessAreaId } = useContext(UserTnaContext);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [developmentAreas, setDevelopmentAreas] = useState([]);
     const [business_area, setBusinessArea]= useState(null);
@@ -33,7 +33,7 @@ function DevelopmentAreasQuestion() {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-
+                    
                     // Assuming 'key_development_areas' is the field that contains the array
                     setBusinessArea(docSnap.data().title);
                     setDevelopmentAreas(docSnap.data().development_areas);
@@ -69,38 +69,49 @@ function DevelopmentAreasQuestion() {
         setIsLoading(true); // Start loading
         if (selectedOptions.length > 0 && userUID) {
             try {
-                const user_profile = {
-                    new_user_profile: {
-                        dev_areas_str: selectedOptions.join(" "), // Join the selected options into a single string
-                        business_area: business_area
-                    },
-                };
-
-                console.log(JSON.stringify(user_profile));
-    
-                // Update your fetch call to use the new structure
-                fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user_profile), // Send the modified user_profile object
-                })
-                .then(response => response.json())
-                .then(data => {
-                    navigate('/', { state: { questions: data.recommendedQuestions } });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                })
-                .finally(() => setIsLoading(false)); // Stop loading
-    
+              // Set loading to true while updating the document
+              setIsLoading(true);
+        
+              const user_profile = {
+                new_user_profile: {
+                  dev_areas_str: selectedOptions.join(" "),
+                  business_area: business_area
+                },
+              };
+        
+              console.log(JSON.stringify(user_profile))
+              const response = await fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user_profile),
+              });
+        
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+        
+              const data = await response.json();
+        
+              // Update the document with selected development areas
+              const userTnaRef = doc(db, 'user_tna', docId);
+              await updateDoc(userTnaRef, {
+                developmentAreas: selectedOptions,
+                business_area: business_area 
+              });
+        
+              // Wait for the Firestore update to complete before navigating
+              console.log({ questions: data[0], businessAreaId: businessAreaId, userTnaId: docId });
+              navigate('/ScenarioQuestion', { state: { questions: data[0], businessAreaId: businessAreaId, userTnaId: docId } });
+        
             } catch (err) {
-                console.error("Error adding/updating document: ", err);
+              console.error("Error during the fetch or Firestore update: ", err);
+            } finally {
+              setIsLoading(false); // Stop loading regardless of outcome
             }
-        } else {
+          } else {
             alert('Please select at least one option before submitting.');
-            setIsLoading(false); // Stop loading if there's an error
-        }
-    };
+          }
+        };
     return (
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', m: 4 }}>

@@ -10,6 +10,7 @@ import IndustryQuestion from './components/IndustryQuestion';
 import { UserTnaProvider } from './components/UserTnaContext';
 import BusinessAreaQuestion from './components/BusinessAreaQuestion';
 import DevelopmentAreasQuestion from './components/DevelopmentAreasQuestion';
+import ScenarioQuestion from './components/ScenarioQuestion';
 function App() {
   return (
     <Router>
@@ -25,7 +26,7 @@ function App() {
             <Route path="business" element={<BusinessAreaQuestion />} />
             <Route path="development-areas" element={<DevelopmentAreasQuestion />} />
           </Route>
-
+          <Route path='/ScenarioQuestion'element={<ScenarioQuestion/>}/>
         </Routes>
       </UserTnaProvider>
     </Router >

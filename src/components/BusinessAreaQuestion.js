@@ -8,9 +8,11 @@ import { getAuth } from "firebase/auth";
 import UserTnaContext from './UserTnaContext';
 
 function BusinessAreaQuestion() {
-    const { setUserTnaId, userTnaId: docId, setBusinessAreaId } = useContext(UserTnaContext);
+    const { setUserTnaId, userTnaId: docId, businessAreaId, setBusinessAreaId } = useContext(UserTnaContext);
     const [selectedOption, setSelectedOption] = useState(null);
     const [businessAreas, setBusinessAreas] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -36,12 +38,14 @@ function BusinessAreaQuestion() {
 
     const handleSubmit = async () => {
         if (selectedOption) {
+            setIsLoading(true); // Start loading immediately upon form submission
+    
             try {
                 // Get the current user's ID from Firebase Authentication
                 const auth = getAuth();
                 const user = auth.currentUser;
                 const userUID = user ? user.uid : null;
-
+                
                 if (userUID) {
                     if (!docId) {
                         navigate('initial-questions/upskill');
@@ -51,23 +55,32 @@ function BusinessAreaQuestion() {
                         await updateDoc(docRef, {
                             business_area: selectedOption,
                         });
-
+    
+                        // Check if the businessAreaId context has been updated
+                        if (businessAreaId) {
+                            // Navigate to the next question after submission
+                            navigate('/initial-questions/development-areas');
+                        } else {
+                            // Wait and retry or handle the missing ID appropriately
+                            console.log('Waiting for business area ID to be set...');
+                            // You can add some retry logic here if necessary
+                        }
                     }
-                    // 
-                    // Navigate to the next question after submission
-                    navigate('/initial-questions/development-areas');
                 } else {
                     // No user is signed in
                     alert('No user is signed in.');
-                    navigate('/login')
+                    navigate('/login');
                 }
             } catch (err) {
                 console.error("Error adding/updating document: ", err);
+            } finally {
+                setIsLoading(false); // Stop loading regardless of the outcome
             }
         } else {
             alert('Please select an option before submitting.');
         }
     };
+    
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', m: 4 }}>

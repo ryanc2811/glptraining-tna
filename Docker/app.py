@@ -81,7 +81,7 @@ def get_recommendations(new_user_profile_dict):
     # Filter users in the same cluster and compute similarities, etc.
     similar_users = user_profiles[user_profiles['cluster'] == cluster]['user_id']
 
-    # Assuming `similar_users` contains user IDs of similar users and `user_responses` is your DataFrame with all user responses
+    
     filtered_responses = user_responses[user_responses['user_id'].isin(similar_users)]
 
     # Create the user-item interaction matrix
