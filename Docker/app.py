@@ -19,24 +19,14 @@ user_responses = pd.read_csv('./data/user_responses.csv')
 
 
 def create_interaction_matrix(df, user_col, item_col, rating_col, threshold=None):
-    """
-    :param df: DataFrame containing user, item, and rating columns
-    :param user_col: name of the user column
-    :param item_col: name of the item/question column
-    :param rating_col: name of the rating/response column
-    :param threshold: minimum number of ratings required for a user to be included
-    :return: interaction matrix as a sparse matrix, user index, item index
-    """
-    # Filter users below the threshold
     if threshold is not None:
         user_count = df.groupby(user_col)[rating_col].count()
         df = df[df[user_col].isin(user_count[user_count >= threshold].index)]
 
-    # Pivot the DataFrame to create the interaction matrix
-    interaction_df = df.pivot(index=user_col, columns=item_col, values=rating_col)
-    interaction_df = interaction_df.fillna(0)  # Fill missing values with 0 or your chosen neutral value
+    # Use pivot_table with an aggregation function
+    interaction_df = df.pivot_table(index=user_col, columns=item_col, values=rating_col, aggfunc='max')
+    interaction_df = interaction_df.fillna(0)
 
-    # Create a sparse matrix for more efficient computations
     user_index = interaction_df.index
     item_index = interaction_df.columns
     interaction_matrix = csr_matrix(interaction_df.values)
@@ -55,21 +45,12 @@ def predict_scores(interaction_matrix, user_similarity):
 
     return predicted_scores
 
-def rank_questions(predicted_scores, item_index):
-    # Ensure predicted_scores is a dense array if it's sparse
-    if hasattr(predicted_scores, "toarray"):
-        predicted_scores_dense = predicted_scores.toarray()
-    else:
-        predicted_scores_dense = predicted_scores
-
-    # Get the indices of the scores sorted in descending order for each user
-    ranked_question_indices = np.argsort(-predicted_scores_dense, axis=1)
-
-    # Convert indices to question IDs using the item_index list
+def rank_questions(predicted_scores, item_index, max_questions=10):
+    ranked_question_indices = np.argsort(-predicted_scores, axis=1)
     ranked_questions = []
     for user_rank in ranked_question_indices:
-        ranked_questions.append([item_index[i] for i in user_rank])
-
+        # Limit the number of questions to max_questions
+        ranked_questions.append([item_index[i] for i in user_rank][:max_questions])
     return ranked_questions
 
 def get_recommendations(new_user_profile_dict):
@@ -95,8 +76,6 @@ def get_recommendations(new_user_profile_dict):
 
     # Rank questions for each user based on predicted scores
     recommended_questions = rank_questions(predicted_scores, item_index)
-
-    
 
     # Return ranked question recommendations
     return recommended_questions
