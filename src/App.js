@@ -11,15 +11,19 @@ import { UserTnaProvider } from './components/UserTnaContext';
 import BusinessAreaQuestion from './components/BusinessAreaQuestion';
 import DevelopmentAreasQuestion from './components/DevelopmentAreasQuestion';
 import ScenarioQuestion from './components/ScenarioQuestion';
+import theme from './theme';
+import { ThemeProvider } from '@mui/material/styles';
 function App() {
   return (
     <Router>
+      <ThemeProvider theme={theme}>
       <UserTnaProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
+          
           <Route path="/login" element={<Login />} />
-
+          
           <Route path="/initial-questions" element={<InitialQuestions />}>
             <Route path="upskill" element={<UpskillQuestion />} /> {/* This is the index route */}
             <Route path="industry" element={<IndustryQuestion />} />
@@ -29,6 +33,7 @@ function App() {
           <Route path='/ScenarioQuestion'element={<ScenarioQuestion/>}/>
         </Routes>
       </UserTnaProvider>
+      </ThemeProvider>
     </Router >
   );
 }
