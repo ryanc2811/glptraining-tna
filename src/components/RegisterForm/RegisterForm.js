@@ -1,13 +1,15 @@
-import React, { useState, navigate } from 'react';
+import React, { useState } from 'react';
 import { Stepper, Step, StepLabel, Button, Box, Typography, Grid} from '@mui/material';
 import StepOne from './ContactStep';
 import StepTwo from './EmploymentStep';
 import StepThree from './TermsStep';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Account Setup', 'Employment Details', 'Terms & Conditions'];
 
 function RegisterForm() {
   const [activeStep, setActiveStep] = useState(0);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
