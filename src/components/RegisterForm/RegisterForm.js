@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Stepper, Step, StepLabel, Button, Box, Typography} from '@mui/material';
+import React, { useState, navigate } from 'react';
+import { Stepper, Step, StepLabel, Button, Box, Typography, Grid} from '@mui/material';
 import StepOne from './ContactStep';
 import StepTwo from './EmploymentStep';
 import StepThree from './TermsStep';
 
-const steps = ['Account Setup', 'Personal Details', 'Confirm Details'];
+const steps = ['Account Setup', 'Employment Details', 'Terms & Conditions'];
 
 function RegisterForm() {
   const [activeStep, setActiveStep] = useState(0);
@@ -56,13 +56,7 @@ function RegisterForm() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+      
       <div>
         {activeStep === steps.length ? (
           <div>
@@ -89,6 +83,20 @@ function RegisterForm() {
           </div>
         )}
       </div>
+      <Stepper sx={{my:2}}activeStep={activeStep}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <Grid container>
+              <Grid item xs>
+                <Button onClick={() => navigate('/login')} sx={{ textTransform: 'none' }}>
+                  Already have an account?
+                </Button>
+              </Grid>
+            </Grid>
     </Box>
   );
 }

@@ -33,7 +33,6 @@ function BusinessAreaQuestion() {
     const handleSelect = (option, id) => {
         setSelectedOption(option);
         setBusinessAreaId(id);
-        console.log(id);
     };
 
     const handleSubmit = async () => {

@@ -4,7 +4,7 @@ import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import imagePath from '../images/login-image.jpg'; // Adjust the path accordingly
+import imagePath from '../images/register-image.jpg'; // Adjust the path accordingly
 import logoImage from '../images/logo_whitetab.svg';
 import RegisterForm from './RegisterForm/RegisterForm';
 function Register() {
@@ -80,7 +80,7 @@ function Register() {
       <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
           <Box justify="space-between"
             sx={{
-              my: { xs: 5, sm: 5, md:15},
+              my: { xs: 5, sm: 5, md:5},
               mx:{ xs: 2, sm: 5, md:20},
               display: 'flex',
               flexDirection: 'column',
@@ -90,62 +90,11 @@ function Register() {
            
           <Typography component="h1" variant="h2">Register</Typography>
           
-          <Typography component="h1" variant="h4"sx={{pt:2}} >Create a new GLP Training TNA account.</Typography>
-
-          {error && <Typography color="error">{error}</Typography>}
+          
          <RegisterForm></RegisterForm>
-          <Box component="form" noValidate onSubmit={register} sx={{ mt: 1, }}>
-          <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="fullname"
-              label="Name"
-              name="fullname"
-              autoComplete="fullname"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Register
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Button onClick={() => navigate('/login')} sx={{ textTransform: 'none' }}>
-                  Already have an account?
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+          
+            
+       
         </Box>
       </Grid>
     </Grid>
