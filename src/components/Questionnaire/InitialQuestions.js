@@ -7,12 +7,11 @@ import {
   Button,
   Box,
   Typography,
-  Grid,
   CircularProgress
 } from "@mui/material";
 import { db } from '../../firebase';
-import { collection, serverTimestamp, addDoc} from 'firebase/firestore';
-import { getAuth, onAuthStateChanged} from "firebase/auth";
+import { collection, serverTimestamp, addDoc, getDocs, doc,getDoc} from 'firebase/firestore';
+import { useAuth } from '../../contexts/AuthContext';
 import StepOne from "./UpskillQuestion";
 import StepTwo from "./IndustryQuestion";
 import StepThree from "./BusinessAreaQuestion";
@@ -21,6 +20,7 @@ import StepFour from "./DevelopmentAreasQuestion";
 const steps = ["Upskill", "Industry", "Business Area", "Development Areas"];
 
 function InitialQuestions({ onComplete }) {
+  const { currentUser } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,25 +29,15 @@ function InitialQuestions({ onComplete }) {
     industry_preference: "",
     business_area: "",
     business_area_id: "",
-    user_id: "",
+    user_id: currentUser ? currentUser.uid : null, // Set user ID from context
     user_tna_id: "",
   });
   const navigate = useNavigate();
   useEffect(() => {
-    const auth = getAuth();
-    
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-
-        setFormData(currentFormData => ({ ...currentFormData, user_id: user.uid }));
-      } else {
-        // User is signed out
-        navigate("/login");
-      }
-    });
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, [navigate]);
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser, navigate]);
 
   const createUserTNA = async () => {
     setIsLoading(true);
@@ -80,21 +70,7 @@ function InitialQuestions({ onComplete }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setFormData({
-      upskill_option: "",
-      development_areas: [],
-      industry_preference: "",
-      business_area: "",
-      user_id: "",
-      user_tna_id: "",
-    });
-  };
-
   const generateQuestions = async () => {
-  
-
     if (formData.development_areas.length > 0) {
       try {
         setIsLoading(true);
@@ -115,12 +91,13 @@ function InitialQuestions({ onComplete }) {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
-        const data = await response.json();
+
+        const questionIds = await response.json(); // Assume this returns an array of question IDs
+        const questions = await fetchAllQuestionsDetails(questionIds[0]);
         setIsLoading(false);
-        // Call onComplete when everything is done
-        
-        onComplete(data[0], formData.business_area_id, formData.user_tna_id); 
+
+        // Call onComplete when all questions are fetched
+        onComplete(questions, formData.business_area_id, formData.user_tna_id);
         
       } catch (err) {
         console.error("Error during the API call: ", err);
@@ -129,18 +106,40 @@ function InitialQuestions({ onComplete }) {
     } else {
       alert('Please select at least one development area before submitting.');
     }
-  };
+};
+
+const fetchAllQuestionsDetails = async (questionIds) => {
+  const questions = [];
+  const businessAreasRef = collection(db, "business_areas");
+  const businessAreasSnap = await getDocs(businessAreasRef);
+
+  for (const id of questionIds) {
+    let found = false;
+    for (const businessAreaDoc of businessAreasSnap.docs) {
+      if (found) break; // Stop searching if the question is found
+      const questionRef = doc(db, "business_areas", businessAreaDoc.id, "questions", id);
+      const questionSnap = await getDoc(questionRef);
+      if (questionSnap.exists()) {
+        questions.push(questionSnap.data());
+        found = true;
+      }
+    }
+    if (!found) console.log(`Question ID ${id} not found across any business areas.`);
+  }
+  return questions;
+};
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
-        <CircularProgress />
-        <Typography variant="h3" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' }, color: '#001A54' }}>
+      <Box sx={{ display: "flex", alignItems: "center", height:'80vh'}}>
+                <CircularProgress sx={{mx:2}} />
+                <Typography variant="h3" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem'}, color: '#001A54' }}>
           GENERATING QUESTIONS...
         </Typography>
-      </Box>
+              </Box>
     );
   }
+
 
   function getStepContent(stepIndex) {
     switch (stepIndex) {

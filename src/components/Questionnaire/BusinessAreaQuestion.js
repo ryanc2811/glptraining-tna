@@ -26,8 +26,7 @@ function BusinessAreaQuestion({ formData, setFormData, error }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', m: 4 }}>
       {isLoading ? (
-        /*<CircularProgress />*/
-        console.log("TEST")
+        <CircularProgress />
       ) : (
         <>
           <Paper

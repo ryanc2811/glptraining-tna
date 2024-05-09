@@ -4,10 +4,10 @@ import { Box, TextField, Typography } from '@mui/material';
 function ContactStep({ formData, setFormData,error }) {
     return (
         <Box>
-            <Typography component="h1" variant="h4"sx={{pt:2}} >Create a new GLP Training TNA account.</Typography>
+            <Typography component="h1" variant="h4"sx={{pt:2,pb:2}} >Create a new GLP Training TNA account.</Typography>
 
             {error && <Typography color="error">{error}</Typography>}
-          <Typography variant="h6">Enter your personal details</Typography>
+
           <TextField
             margin="normal"
             required

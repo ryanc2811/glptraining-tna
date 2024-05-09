@@ -9,22 +9,20 @@ import InitialQuestions from './InitialQuestions';
 function Questionnaire() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const [questionsData, setQuestionsData] = useState([]);
-  const [businessAreaId, setBusinessAreaId] = useState('');
-  const [userTnaId, setUserTnaId] = useState('');
 
 
-  const handleComplete = (data, businessAreaId, userTnaId) => {
-    setQuestionsData(data);
-    setBusinessAreaId(businessAreaId);
-    setUserTnaId(userTnaId);
-    
-    // Navigate to the scenario questions page with data
+
+ 
+  const handleComplete = (questions, businessAreaId, userTnaId) => {
+
     navigate('/scenario-questions', {
-      state: { questions: data, businessAreaId, userTnaId }
+        state: {
+            questions: questions.filter(q => q !== undefined),
+            businessAreaId,
+            userTnaId
+        }
     });
-  };
-
+};
 return (
   <Grid container component="main" sx={{ height: { xs: '90vh', sm: '100vh', md: '100vh' }, position: 'relative', padding: { md: '2vh' } }}>
     <Grid item xs={12} sm={6} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
@@ -63,7 +61,7 @@ return (
       >
         <Typography variant="h5">Find Your Path</Typography>
         <Box sx={{ display: 'flex' }}>
-          <Typography variant="h6">With</Typography>
+          <Typography variant="h6" sx={{color:'#FFFFFF'}}>With</Typography>
           <Box component="img"
                src={logoImage}
                alt="GLP Training Logo"

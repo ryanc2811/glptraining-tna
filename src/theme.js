@@ -39,7 +39,7 @@ const theme = createTheme({
           h6: {
             fontSize: '1.2rem',
             
-            color: '#FFFFFF',
+            color: '#001a54',
           },
 
         // You can add more custom styles as needed

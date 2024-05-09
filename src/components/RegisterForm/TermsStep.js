@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Checkbox, FormControlLabel, Link, Typography } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Typography, Link as MuiLink } from '@mui/material';
 
 function TermsStep({ formData, setFormData }) {
   return (
-    <Box>
-      <Typography variant="h6">Terms and Conditions</Typography>
-      <Typography>
-        Please read our <Link href="/privacy-policy">Privacy Policy</Link> and <Link href="/gdpr">GDPR Statement</Link>.
+    <Box sx={{ display: "flex", flexDirection: "column", mb: 4 }}>
+      <Typography component="h1" variant="h4" sx={{ pt: 2, pb: 2 }}>Terms and Conditions</Typography>
+      <Typography sx={{ pb: 2 }}>
+        Please read our <MuiLink href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</MuiLink> and <MuiLink href="/gdpr" target="_blank" rel="noopener noreferrer">GDPR Statement</MuiLink>.
       </Typography>
       <FormControlLabel
         control={

@@ -1,29 +1,10 @@
 // src/components/Register.js
-import React, { useState } from 'react';
-import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material';
-import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Grid, Paper,Typography, Box } from '@mui/material';
+
 import imagePath from '../images/register-image.jpg'; // Adjust the path accordingly
 import logoImage from '../images/logo_whitetab.svg';
 import RegisterForm from './RegisterForm/RegisterForm';
 function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
-
-  const register = async (e) => {
-    e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(userCredential.user);
-      navigate("/"); // Navigate to home or dashboard page after registration
-    } catch (error) {
-      console.error(error.message);
-      alert(error.message);
-    }
-  };
 
   return (
     <Grid container component="main" sx={{ height: { xs: '90vh', sm: '100vh', md: '100vh' },position: 'relative',padding:{md: '2vh' } }}>
@@ -63,7 +44,7 @@ function Register() {
   }}
 >
   <Typography variant="h5">Find Your Path</Typography>
-  <Box sx={{ display :'flex',}}><Typography variant="h6">With</Typography>
+  <Box sx={{ display :'flex'}}><Typography variant="h6" sx={{color:'#FFFFFF'}}>With</Typography>
   <Box component="img" 
      src={logoImage} 
      alt="GLP Training Logo" 

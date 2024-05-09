@@ -60,7 +60,7 @@ function Login() {
   }}
 >
   <Typography variant="h5">Find Your Path</Typography>
-  <Box sx={{ display :'flex',}}><Typography variant="h6">With</Typography>
+  <Box sx={{ display :'flex',}}><Typography variant="h6" sx={{color:'#FFFFFF'}}>With</Typography>
   <Box component="img" 
      src={logoImage} 
      alt="GLP Training Logo" 

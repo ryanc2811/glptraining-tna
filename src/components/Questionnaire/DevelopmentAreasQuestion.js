@@ -63,8 +63,7 @@ function DevelopmentAreasQuestion({ formData, setFormData, error }) {
       }}
     >
       {isLoading ? (
-        /*<CircularProgress />*/
-        console.log("Test")
+        <CircularProgress />
       ) : (
         <>
           <Paper

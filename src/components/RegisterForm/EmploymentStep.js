@@ -4,7 +4,7 @@ import { Box, TextField, Typography } from '@mui/material';
 function EmploymentStep({ formData, setFormData }) {
   return (
     <Box>
-      <Typography variant="h6">Enter your employment details</Typography>
+      <Typography component="h1" variant="h4"sx={{pt:2,pb:2}}>Enter your employment details</Typography>
       <TextField
         margin="normal"
         required
