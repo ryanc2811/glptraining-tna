@@ -73,24 +73,51 @@ const ScenarioQuestion = () => {
       padding: { md: "2vh" },
     }}
   >
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={5}
-      lg={5}
-      sx={{ position: "relative", display: "flex", justifyContent: "center" }}
-    >
-        <Box sx={{ backgroundImage: `url(${imagePath})`, backgroundSize: "cover", backgroundPosition: "center", width: "100%", height: "100%", borderRadius: "8px", overflow: "hidden", "&::after": { content: '""', position: "absolute", bottom: 0, right: 0, left: 0, height: "50%", background: "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,1) 100%)", borderRadius: "8px" }, }}>
-          <Box sx={{ position: "absolute", bottom: 0, left: 0, width: "auto", textAlign: "left", color: "white", zIndex: 1, p: 2 }}>
-            <Typography variant="h5">Find Your Path</Typography>
-            <Box sx={{ display: "flex" }}>
-              <Typography variant="h6">With</Typography>
-              <Box component="img" src={logoImage} alt="GLP Training Logo" sx={{ height: "auto", maxWidth: "100%", width: { xs: "120px", sm: "150px" }, pl: "6px" }} />
-            </Box>
-          </Box>
+    <Grid item xs={12} sm={6} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          backgroundImage: `url(${imagePath})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          width: '100%',
+          height: { xs: '35vh', sm: '50vh', md: '100%' },
+          borderRadius: { md: '8px' },
+          overflow: 'hidden',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            left: 0,
+            height: { xs: '75%', sm: '50%' },
+            background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,1) 100%)',
+            borderRadius: { md: '8px' },
+          }
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '0',
+          left: '0',
+          width: 'auto',
+          textAlign: 'left',
+          color: 'white',
+          zIndex: 1,
+          p: 2,
+        }}
+      >
+        <Typography variant="h5">Find Your Path</Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography variant="h6" sx={{color:'#FFFFFF'}}>With</Typography>
+          <Box component="img"
+               src={logoImage}
+               alt="GLP Training Logo"
+               sx={{ height: 'auto', maxWidth: '100%', width: { xs: '120px', sm: '150px' }, pl: '6px' }}
+          />
         </Box>
-      </Grid>
+      </Box>
+    </Grid>
       <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
         <Box
           sx={{
