@@ -46,7 +46,7 @@ function IndustryQuestion({ formData, setFormData,error }) {
                 }}
             >
                 <Box textAlign="center" sx={{color: theme.palette.primary.main }}>
-                <Typography variant="h3"sx={{fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' }, color: '#001A54' }}><span style={{ fontWeight: 'normal' }}>WHAT</span> INDUSTRY <span style={{ fontWeight: 'normal' }}>DO YOU WORK IN?</span></Typography> 
+                <Typography variant="h3"sx={{fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' }, color: '#001A54' }}><span style={{ fontWeight: 'normal' }}>WHAT</span> INDUSTRY <span style={{ fontWeight: 'normal' }}>DO YOU/WANT TO WORK IN?</span></Typography> 
     
                 </Box>
 
