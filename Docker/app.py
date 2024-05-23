@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
-from recommend_courses import predict_courses
+from recommended_courses import predict_courses
 
 app = Flask(__name__)
 # Enable CORS for all domains on all routes with automatic options responses.
@@ -93,7 +93,7 @@ def recommend():
 
 
 @app.route('/predict', methods=['POST'])
-def predict_courses():
+def recommend_courses():
     try:
         # Receive JSON data from the client
         data = request.get_json(force=True)
@@ -102,7 +102,7 @@ def predict_courses():
         user_responses = data['user_responses']
         
         # Call the recommendation engine
-        predictions = recommend_courses.predict_courses(user_responses)
+        predictions = predict_courses(user_responses)
         
         # Return predictions
         return jsonify({'predicted_courses': predictions}), 200
