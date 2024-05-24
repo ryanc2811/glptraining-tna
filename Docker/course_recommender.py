@@ -1,6 +1,7 @@
 import numpy as np
 import joblib
 import tensorflow as tf
+import pandas as pd
 
 # Load your trained model and encoders
 model = tf.keras.models.load_model('./course_recommendation_model/model')

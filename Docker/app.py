@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
-from recommend_courses import predict_courses
+from course_recommender import predict_courses
 
 app = Flask(__name__)
 # Enable CORS for all domains on all routes with automatic options responses.
