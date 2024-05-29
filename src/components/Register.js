@@ -2,7 +2,7 @@
 import { Grid, Paper,Typography, Box } from '@mui/material';
 
 import imagePath from '../images/register-image.jpg'; // Adjust the path accordingly
-import logoImage from '../images/logo_whitetab.svg';
+import logoImage from "../images/RGB-Logo-digital use.png";
 import RegisterForm from './RegisterForm/RegisterForm';
 function Register() {
 

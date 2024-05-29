@@ -1,0 +1,9 @@
+.swiper-pagination-bullet {
+    width: 8px; /* Size of the dots */
+    height: 8px; /* Size of the dots */
+    margin: 0 4px; /* Adds space between dots */
+}
+
+.swiper-pagination-bullet-active {
+    background: #9666FF; /* Change color for the active dot */
+}

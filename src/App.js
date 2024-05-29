@@ -7,7 +7,7 @@ import PrivacyPolicy from './components/RegisterForm/PrivacyPolicy';
 import GDPRStatement from './components/RegisterForm/GDPRStatement';
 import Login from './components/Login';
 import ScenarioQuestion from './components/Questionnaire/ScenarioQuestion';
-
+import Results from './components/Questionnaire/Results';
 import AuthContextProvider from './contexts/AuthContext';
 import theme from './theme';
 import { ThemeProvider } from '@mui/material/styles';
@@ -21,6 +21,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Questionnaire/>}/>
+          <Route path="/results/:resultId" element={<Results />} />
           <Route path="/scenario-questions" element={<ScenarioQuestion/>}/>
           <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
           <Route path="/gdpr" element={<GDPRStatement/>}/>

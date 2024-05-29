@@ -11,8 +11,10 @@ import {
 
 import LinearProgressWithLabel from "../LinearProgressWithLabel"; // Adjust the import path as needed
 import imagePath from "../../images/scenario-question-img.jpg"; // Adjust the path accordingly
-import logoImage from "../../images/logo_whitetab.svg";
-
+import logoImage from "../../images/RGB-Logo-digital use.png";
+import { db } from '../../firebase';
+import { useAuth } from '../../contexts/AuthContext';
+import { collection, addDoc} from 'firebase/firestore';
 const ScenarioQuestion = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,8 +24,12 @@ const ScenarioQuestion = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [ratings, setRatings] = useState(Array(questions.length).fill(null)); // Initialize an array to hold ratings for all questions
+  const { currentUser } = useAuth();
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate("/login");
+    }
     if (questions && questions.length > 0 && currentQuestionIndex < questions.length) {
       setIsLoading(true);
       const questionDetails = questions[currentQuestionIndex];
@@ -35,7 +41,7 @@ const ScenarioQuestion = () => {
     } else {
       setIsLoading(false);
     }
-  }, [questions, currentQuestionIndex, businessAreaId]);
+  }, [questions, currentQuestionIndex, businessAreaId, currentUser, navigate]);
 
   const handleRating = (rating) => {
     const updatedRatings = [...ratings];
@@ -43,7 +49,7 @@ const ScenarioQuestion = () => {
     setRatings(updatedRatings);
   };
 
-  const handleNext = () => {
+  const handleNext = async() => {
     if (!ratings[currentQuestionIndex]) {
       alert("Please select a rating before proceeding.");
       return;
@@ -52,9 +58,58 @@ const ScenarioQuestion = () => {
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
     } else {
-      navigate("/results", { state: { userTnaId } });
-    }
-  };
+
+      const user_id= currentUser ? currentUser.uid : null;
+
+      /*
+      const userResponses = questions.map((question, index) => ({
+        business_area_id: question.business_area_id,
+        question_id: question.id, // Ensure that question ID is available in the `questions` object
+        response: ratings[index],
+        user_id: user_id,
+        user_tna: userTnaId,  // Assuming `user_tna` is the same as `userTnaId` or has been provided elsewhere
+        weightage: 5
+      }));
+
+      // Store each response in Firestore
+      userResponses.forEach(async response => {
+        await db.collection('user_responses').add(response);
+      });
+
+    */
+      // Prepare data for the API call
+    const userProfile = questions.map((question, index) => ({
+      business_area_id: question.business_area_id,
+      skills: question.related_skill,
+      proficiency: ratings[index] > 3 ? 'proficient' : 'needs_improvement'
+    }));
+
+    // Call the course recommendation API
+    const courseRecommendationResponse = await fetch('https://recommendations-bpdibe4qla-ez.a.run.app/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_responses: userProfile })
+    });
+
+    const { predicted_courses } = await courseRecommendationResponse.json();
+
+    // Filter skills based on proficiency
+    const topSkills = userProfile.filter(response => response.proficiency === 'proficient').map(response => response.skills);
+    const skillsToImprove = userProfile.filter(response => response.proficiency === 'needs_improvement').map(response => response.skills);
+
+    // Store the data in Firestore
+    const resultDoc = await addDoc(collection(db, 'tna_results'),{
+      predicted_courses,
+      top_skills:topSkills,
+      skills_to_improve:skillsToImprove,
+      user_id: user_id,
+      user_tna:userTnaId
+    });
+
+    // Navigate to the results page with the ID of the Firestore document
+    navigate(`/results/${resultDoc.id}`);
+  }
+};
 
   const handleBack = () => {
     const prevIndex = currentQuestionIndex - 1;
@@ -73,7 +128,7 @@ const ScenarioQuestion = () => {
       padding: { md: "2vh" },
     }}
   >
-    <Grid item xs={12} sm={6} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+    <Grid item xs={12} sm={12} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
       <Box
         sx={{
           backgroundImage: `url(${imagePath})`,
@@ -118,7 +173,7 @@ const ScenarioQuestion = () => {
         </Box>
       </Box>
     </Grid>
-      <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
+      <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
         <Box
           sx={{
             my: { xs: 5, sm: 5, md: 5 },

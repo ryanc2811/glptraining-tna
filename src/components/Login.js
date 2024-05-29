@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import imagePath from '../images/login-image.jpg'; // Adjust the path accordingly
-import logoImage from '../images/logo_whitetab.svg';
+import logoImage from "../images/RGB-Logo-digital use.png";
 
 function Login() {
   const [email, setEmail] = useState('');

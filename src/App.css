@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+.swiper-pagination-bullet {
+  background: #9666FF; /* Set to your theme primary color or any color */
+  opacity: 1; /* Makes sure all dots are visible */
+  width: 8px; /* Size of the dots */
+  height: 8px; /* Size of the dots */
+  margin: 0 4px; /* Adds space between dots */
+}
+
+.swiper-pagination-bullet-active {
+  background: #00febe; /* Change color for the active dot */
+}

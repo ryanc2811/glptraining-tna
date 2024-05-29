@@ -1,68 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import {
-  CircularProgress,
-  Paper,
-  Box,
-  Button,
-  Typography,
-  Grid,
-} from "@mui/material";
-
-import LinearProgressWithLabel from "../LinearProgressWithLabel"; // Adjust the import path as needed
-import imagePath from "../../images/scenario-question-img.jpg"; // Adjust the path accordingly
-import logoImage from "../../images/logo_whitetab.svg";
-
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
+import { db } from '../../firebase'; 
+import { doc, getDoc } from 'firebase/firestore';
+import { Box, Typography, Paper, Grid,Button, MobileStepper} from '@mui/material';
+import imagePath from "../../images/scenario-question-img.jpg"; 
+import logoImage from "../../images/RGB-Logo-digital use.png";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination} from 'swiper/modules';
+import 'swiper/css'; // Import Swiper styles
+import 'swiper/css/pagination'; // Import pagination styles
+import { BorderedBox } from '../StyledComponents/StyledBox'; 
+import '../../styles/CustomSwiperStyle.css'
 const Results = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { questions, businessAreaId, userTnaId } = location.state || {};
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState({});
+  const theme = useTheme();
+  const { resultId } = useParams();
+  const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [ratings, setRatings] = useState(Array(questions.length).fill(null)); // Initialize an array to hold ratings for all questions
+  const [activeStep, setActiveStep] = useState(0);
+  const [skills, setSkills] = useState({ topSkills: [], skillsToImprove: [] });
 
   useEffect(() => {
-    if (questions && questions.length > 0 && currentQuestionIndex < questions.length) {
-      setIsLoading(true);
-      const questionDetails = questions[currentQuestionIndex];
-      setCurrentQuestion(questionDetails || {});
-      setIsLoading(false);
-      // Update progress each time a new question is fetched
-      const newValue = ((currentQuestionIndex + 1) / questions.length) * 100;
-      setProgress(newValue);
-    } else {
-      setIsLoading(false);
-    }
-  }, [questions, currentQuestionIndex, businessAreaId]);
+    const fetchData = async () => {
+      const docRef = doc(db, 'tna_results', resultId);
+      const docSnap = await getDoc(docRef);
 
-  const handleRating = (rating) => {
-    const updatedRatings = [...ratings];
-    updatedRatings[currentQuestionIndex] = rating;
-    setRatings(updatedRatings);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        await fetchCourses(data.predicted_courses);
+        setSkills({
+          topSkills: data.top_skills.slice(0, 3).map(skill => skill.replace(/_/g, ' ')),
+                skillsToImprove: data.skills_to_improve.slice(0, 3).map(skill => skill.replace(/_/g, ' ')),
+                allTopSkills: data.top_skills.map(skill => skill.replace(/_/g, ' ')),
+                allSkillsToImprove: data.skills_to_improve.map(skill => skill.replace(/_/g, ' '))
+        });
+        setIsLoading(false);
+      } else {
+        console.log("No such document!");
+        setIsLoading(false);
+      }
+    };
+
+    const fetchCourses = async (courseIds) => {
+      const coursesData = await Promise.all(courseIds.map(async (id) => {
+        const courseRef = doc(db, 'courses', id);
+        const courseSnap = await getDoc(courseRef);
+        return courseSnap.exists() ? courseSnap.data() : null;
+      }));
+
+      setCourses(coursesData.filter(course => course));
+    };
+
+    fetchData();
+  }, [resultId]);
+
+  const truncateDescription = (description, limit = 50) => {
+    return description.split(" ").slice(0, limit).join(" ") + "...";
   };
-
-  const handleNext = () => {
-    if (!ratings[currentQuestionIndex]) {
-      alert("Please select a rating before proceeding.");
-      return;
-    }
-    const nextIndex = currentQuestionIndex + 1;
-    if (nextIndex < questions.length) {
-      setCurrentQuestionIndex(nextIndex);
-    } else {
-      navigate("/results", { state: { userTnaId } });
-    }
-  };
-
-  const handleBack = () => {
-    const prevIndex = currentQuestionIndex - 1;
-    if (prevIndex >= 0) {
-      setCurrentQuestionIndex(prevIndex);
-    }
-  };
-
   return (
     <Grid
     container
@@ -73,7 +67,7 @@ const Results = () => {
       padding: { md: "2vh" },
     }}
   >
-    <Grid item xs={12} sm={6} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+    <Grid item xs={12} sm={12} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
       <Box
         sx={{
           backgroundImage: `url(${imagePath})`,
@@ -118,48 +112,65 @@ const Results = () => {
         </Box>
       </Box>
     </Grid>
-      <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
-        <Box
+      <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
+      <Box
           sx={{
             my: { xs: 5, sm: 5, md: 5 },
-            mx: { xs: 2, sm: 5, md: 15 },
-            display: "flex",
+            mx: { xs: 2, sm: 5, md: 5 },
+            
             flexDirection: "column",
             alignItems: "left",
           }}
         >
-          <Typography variant="body2">Results Progress</Typography>
-          <LinearProgressWithLabel value={progress} />
+      <Typography sx={{color:'text.main'}} variant="h3" gutterBottom>Your Recommended Courses</Typography>
           {isLoading ? (
-            <CircularProgress />
+            <Typography>Loading courses...</Typography>
           ) : (
-            <>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 4, mb: 2 }}>
-                <Box sx={{ width: 40, height: 40, backgroundColor: "primary.main", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "common.white", marginRight: 2, mt: 2 }}>
-                  <Typography variant="subtitle1">{currentQuestionIndex + 1}</Typography>
-                </Box>
-                <Typography sx={{ mt: 2 }} variant="h2" component="h1">Scenario</Typography>
-              </Box>
-              <Typography variant="body1">{currentQuestion.scenario}</Typography>
-              <Typography sx={{ mt: 2 }} variant="h3" component="h1" gutterBottom>Question</Typography>
-              <Typography variant="body2">{currentQuestion.text}</Typography>
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                <Typography sx={{ my: 2, color: "#001A54", fontWeight: "bold" }} variant="h4">Rank your ability</Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <Button key={rating} variant={ratings[currentQuestionIndex] === rating ? "contained" : "outlined"} onClick={() => handleRating(rating)} sx={{ mx: 0.5, height: "50px", width: "50px", fontSize: "1rem", fontWeight: "bold", padding: "10px 16px", textTransform: "none" }}>{rating}</Button>
-                ))}
-              </Box>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Button color="inherit" disabled={currentQuestionIndex === 0} onClick={handleBack} sx={{ mr: 1 }}>Back</Button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button variant="contained" color="primary" onClick={handleNext} disabled={ratings[currentQuestionIndex] === null}>{currentQuestionIndex === questions.length - 1 ? "Finish" : "Next"}</Button>
-              </Box>
-            </>
+            <Swiper modules={[Pagination]} spaceBetween={50} slidesPerView={1} pagination={{ clickable: true }}>
+              {courses.map((course, index) => (
+                <SwiperSlide key={index}>
+                  <BorderedBox sx={{ textAlign: 'left', mt:2}}>
+                    <Typography variant="h6">{course.course_name}</Typography>
+                    <Typography variant="body2">{truncateDescription(course.course_description)}</Typography>
+                    <Typography variant="subtitle1">Level {course.course_metadata.level}</Typography>
+                    <Button href={course.course_metadata.url} variant="contained" sx={{ mt:2, mb:5 }}>Go to Course</Button>
+                    </BorderedBox>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           )}
-        </Box>
-      </Grid>
+         
+         <Grid container spacing={2}>
+         <Grid item xs={12}  md={6}lg={6}>
+        <Typography variant="h6" sx={{ mt: 4, mb: 2 ,fontWeight:'bold' }}>Top 3 Skills</Typography>
+        
+          {skills.topSkills.map((skill, index) => (
+            <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1, bgcolor: 'primary.main', borderRadius: '10px', p: 1 }}>
+              <Box sx={{ width: 30, height: 30, bgcolor: 'primary.dark', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1 }}>
+                <Typography variant="body1" color="white">{index + 1}</Typography>
+              </Box>
+              <Typography variant="body1" color="white">{skill}</Typography>
+            </Box>
+          ))}
+        
+        </Grid>
+        <Grid item xs={12} md={6} lg={6}>
+        <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight:'bold' }}>Skills to Improve</Typography>
+        
+          {skills.skillsToImprove.map((skill, index) => (
+            <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1, bgcolor: 'error.main', borderRadius: '10px', p: 1 }}>
+              <Box sx={{ width: 30, height: 30, bgcolor: 'error.dark', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1 }}>
+                <Typography variant="body1" color="white">{index + 1}</Typography>
+              </Box>
+              <Typography variant="body1" color="white">{skill}</Typography>
+            </Box>
+          ))}
+        </Grid>
+        </Grid>
+      
+      </Box>
+   
+    </Grid>
     </Grid>
   );
 };
