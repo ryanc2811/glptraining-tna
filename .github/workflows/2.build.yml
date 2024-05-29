@@ -1,4 +1,3 @@
-
 name: Build Workflow
 
 on:
@@ -6,8 +5,6 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
-
 
 jobs:
   build-push-image:
@@ -38,9 +35,7 @@ jobs:
 
       - name: Set version
         id: version
-        #run: echo "::set-output name=VERSION::$(git rev-parse --short HEAD)"
         run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
 
       - name: Build and push the docker image
         env:
@@ -51,3 +46,11 @@ jobs:
           gcloud auth configure-docker europe-west4-docker.pkg.dev
           docker build --platform linux/amd64 -t $DOCKER_IMAGE ./Docker
           docker push $DOCKER_IMAGE
+
+      - name: Clean up Docker images
+        run: |
+          docker image prune -a -f
+          docker system prune -a -f
+
+      - name: Clean up workspace
+        run: rm -rf *
