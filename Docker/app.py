@@ -5,80 +5,36 @@ from joblib import load
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from scipy.sparse import csr_matrix
 from course_recommender import predict_courses
 
 app = Flask(__name__)
 # Enable CORS for all domains on all routes with automatic options responses.
 CORS(app, supports_credentials=True)
-# Load the model from the file
-model = load('model.joblib')
+# Load the pre-trained TF-IDF vectorizer
+tfidf_vectorizer = load('tfidf_vectorizer.joblib')
 
 # Load the CSV files into DataFrames
 user_profiles = pd.read_csv('./data/user_profiles.csv')
+questions_data = pd.read_csv('./data/questions_data.csv')
 user_responses = pd.read_csv('./data/user_responses.csv')
 
 
-def create_interaction_matrix(df, user_col, item_col, rating_col, threshold=None):
-    if threshold is not None:
-        user_count = df.groupby(user_col)[rating_col].count()
-        df = df[df[user_col].isin(user_count[user_count >= threshold].index)]
+# Ensure the dev_areas_str and key_dev_areas_str columns are created
+user_profiles['dev_areas_str'] = user_profiles['developmentAreas'].apply(lambda x: ' '.join(eval(x)) if isinstance(x, str) else '')
+questions_data['key_dev_areas_str'] = questions_data['key_development_areas'].apply(lambda x: ' '.join(eval(x)) if isinstance(x, str) else '')
 
-    # Use pivot_table with an aggregation function
-    interaction_df = df.pivot_table(index=user_col, columns=item_col, values=rating_col, aggfunc='max')
-    interaction_df = interaction_df.fillna(0)
+# Transform the questions data using the TF-IDF vectorizer
+questions_transformed = tfidf_vectorizer.transform(questions_data['key_dev_areas_str'])
 
-    user_index = interaction_df.index
-    item_index = interaction_df.columns
-    interaction_matrix = csr_matrix(interaction_df.values)
-
-    return interaction_matrix, user_index, item_index
-
-def predict_scores(interaction_matrix, user_similarity):
-    # Ensure interaction_matrix is dense if it's sparse
-    if hasattr(interaction_matrix, "toarray"):
-        interaction_matrix_dense = interaction_matrix.toarray()
-    else:
-        interaction_matrix_dense = interaction_matrix
-
-    # Compute predicted scores as a dot product of user similarity and interaction matrix
-    predicted_scores = np.dot(user_similarity, interaction_matrix_dense) / np.array([np.abs(user_similarity).sum(axis=1)]).T
-
-    return predicted_scores
-
-def rank_questions(predicted_scores, item_index, max_questions=10):
-    ranked_question_indices = np.argsort(-predicted_scores, axis=1)
-    ranked_questions = []
-    for user_rank in ranked_question_indices:
-        # Limit the number of questions to max_questions
-        ranked_questions.append([item_index[i] for i in user_rank][:max_questions])
-    return ranked_questions
-
-def get_recommendations(new_user_profile_dict):
+def recommend_questions(user_profile, questions_data, tfidf_vectorizer, questions_transformed, top_n=10):
+    user_vector = tfidf_vectorizer.transform([user_profile['dev_areas_str'].values[0]])
+    similarity_scores = cosine_similarity(user_vector, questions_transformed).flatten()
     
-    # Convert the new user profile dictionary to DataFrame
-    new_user_profile = pd.DataFrame([new_user_profile_dict])
-    cluster = model.predict(new_user_profile)[0]
-    
-    # Filter users in the same cluster and compute similarities, etc.
-    similar_users = user_profiles[user_profiles['cluster'] == cluster]['user_id']
+    # Rank questions by similarity scores
+    ranked_indices = similarity_scores.argsort()[::-1]
+    recommended_questions = questions_data.iloc[ranked_indices].head(top_n)  # Recommend top N questions
 
-    filtered_responses = user_responses[user_responses['user_id'].isin(similar_users)]
-
-    # Create the user-item interaction matrix
-    interaction_matrix, user_index, item_index = create_interaction_matrix(filtered_responses, 'user_id', 'question_id', 'response')
-
-    # Compute user similarity matrix
-    user_similarity = cosine_similarity(interaction_matrix)
-
-    # Predict scores for unanswered questions
-    predicted_scores = predict_scores(interaction_matrix, user_similarity)
-
-    # Rank questions for each user based on predicted scores
-    recommended_questions = rank_questions(predicted_scores, item_index)
-
-    # Return ranked question recommendations
-    return recommended_questions
+    return recommended_questions['question_id'].values.tolist()
 
 
 
@@ -86,11 +42,10 @@ def get_recommendations(new_user_profile_dict):
 @cross_origin()
 def recommend():
     data = request.json
-    new_user_profile = data['new_user_profile']
-    recommendations = get_recommendations(new_user_profile)
-    response =jsonify(recommendations)
-    return response
-
+    new_user_profile = pd.DataFrame([data['new_user_profile']])
+    new_user_profile['dev_areas_str'] = new_user_profile['developmentAreas'].apply(lambda x: ' '.join(x) if isinstance(x, list) else '')
+    recommendations = recommend_questions(new_user_profile, questions_data, tfidf_vectorizer, questions_transformed)
+    return jsonify({'recommended_questions': recommendations})
 
 @app.route('/predict', methods=['POST'])
 def recommend_courses():
