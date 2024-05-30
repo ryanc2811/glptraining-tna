@@ -16,7 +16,7 @@ jobs:
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}"
+          credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -47,10 +47,29 @@ jobs:
           docker build --platform linux/amd64 -t $DOCKER_IMAGE ./Docker
           docker push $DOCKER_IMAGE
 
+      - name: Show disk usage before cleanup
+        run: df -h
+
       - name: Clean up Docker images
         run: |
+          echo "Starting Docker image cleanup..."
           docker image prune -a -f
+          echo "Docker image cleanup completed."
+
+      - name: Clean up Docker system
+        run: |
+          echo "Starting Docker system cleanup..."
           docker system prune -a -f
+          echo "Docker system cleanup completed."
+
+      - name: Show disk usage after Docker cleanup
+        run: df -h
 
       - name: Clean up workspace
-        run: rm -rf *
+        run: |
+          echo "Cleaning up workspace..."
+          rm -rf /home/ryanmvc2811/actions-runner/_work/*
+          echo "Workspace cleanup completed."
+
+      - name: Show final disk usage
+        run: df -h
