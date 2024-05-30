@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
 import { db } from '../../firebase'; 
 import { doc, getDoc } from 'firebase/firestore';
-import { Box, Typography, Paper, Grid,Button, MobileStepper} from '@mui/material';
+import { Box, Typography, Paper, Grid,Button} from '@mui/material';
 import imagePath from "../../images/scenario-question-img.jpg"; 
 import logoImage from "../../images/RGB-Logo-digital use.png";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,11 +12,9 @@ import 'swiper/css/pagination'; // Import pagination styles
 import { BorderedBox } from '../StyledComponents/StyledBox'; 
 import '../../styles/CustomSwiperStyle.css'
 const Results = () => {
-  const theme = useTheme();
   const { resultId } = useParams();
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
   const [skills, setSkills] = useState({ topSkills: [], skillsToImprove: [] });
 
   useEffect(() => {

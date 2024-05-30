@@ -29,7 +29,7 @@ function InitialQuestions({ onComplete }) {
     industry_preference: "",
     business_area: "",
     business_area_id: "",
-    user_id: currentUser ? currentUser.uid : null, // Set user ID from context
+    user_id: currentUser ? currentUser.uid : null, 
     user_tna_id: "",
   });
   const navigate = useNavigate();
