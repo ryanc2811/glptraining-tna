@@ -77,11 +77,10 @@ function InitialQuestions({ onComplete }) {
 
         const user_profile = {
           new_user_profile: {
-            dev_areas_str: formData.development_areas,
-            business_area: formData.business_area
+              developmentAreas: formData.development_areas,
+              business_area: formData.business_area
           },
-        };
-
+      };
         const response = await fetch('https://recommendations-bpdibe4qla-ez.a.run.app/recommend', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -92,8 +91,8 @@ function InitialQuestions({ onComplete }) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const questionIds = await response.json(); // Assume this returns an array of question IDs
-        const questions = await fetchAllQuestionsDetails(questionIds[0]);
+        const questionIds = await response.json(); 
+        const questions = await fetchAllQuestionsDetails(questionIds.recommended_questions); 
         setIsLoading(false);
 
         // Call onComplete when all questions are fetched
