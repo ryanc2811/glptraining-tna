@@ -25,12 +25,18 @@ const Results = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         await fetchCourses(data.predicted_courses);
-        setSkills({
-          topSkills: data.top_skills.slice(0, 3).map(skill => skill.replace(/_/g, ' ')),
-                skillsToImprove: data.skills_to_improve.slice(0, 3).map(skill => skill.replace(/_/g, ' ')),
-                allTopSkills: data.top_skills.map(skill => skill.replace(/_/g, ' ')),
-                allSkillsToImprove: data.skills_to_improve.map(skill => skill.replace(/_/g, ' '))
-        });
+        const skillsToImprove = data.skills_to_improve.map(skill => skill.replace(/_/g, ' '));
+        const topSkills = data.top_skills.map(skill => skill.replace(/_/g, ' '));
+
+      // Filter out duplicates, prioritizing skills to improve
+      const filteredTopSkills = topSkills.filter(skill => !skillsToImprove.includes(skill));
+      
+      setSkills({
+        topSkills: filteredTopSkills.slice(0, 3),
+        skillsToImprove: skillsToImprove.slice(0, 3),
+        allTopSkills: filteredTopSkills,
+        allSkillsToImprove: skillsToImprove
+      });
         setIsLoading(false);
       } else {
         console.log("No such document!");

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import imagePath from '../images/login-image.jpg'; // Adjust the path accordingly
 import logoImage from "../images/RGB-Logo-digital use.png";
+import { useAuth } from '../contexts/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password);
+      await login(email, password);
       navigate("/");
     } catch (error) {
       setError(error.message);
@@ -24,7 +24,7 @@ function Login() {
 
   return (
     <Grid container component="main" sx={{ height: { xs: '90vh', sm: '100vh', md: '100vh' },position: 'relative',padding:{md: '2vh' } }}>
-      <Grid item xs={12} sm={6} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+      <Grid item xs={12} sm={12} md={5} lg={5} sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
         <Box
           sx={{
             backgroundImage: `url(${imagePath})`,
@@ -74,7 +74,7 @@ function Login() {
   </Box>
 </Box>
       </Grid>
-      <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
+      <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
           <Box justify="space-between"
             sx={{
               my: { xs: 5, sm: 5, md:18},
@@ -124,12 +124,16 @@ function Login() {
             >
               Login
             </Button>
+            <Button onClick={() => navigate('/register')} sx={{ textTransform: 'none' }}>
+                 Register new account
+                </Button>
             <Grid container>
               <Grid item xs>
-                <Button onClick={() => navigate('/forgot-password')} sx={{ textTransform: 'none' }}>
+                <Button onClick={() => navigate('/forgot-password')} sx={{ textTransform: 'none', color:'text.main' }}>
                   Forgot password?
                 </Button>
               </Grid>
+        
             </Grid>
           </Box>
         </Box>

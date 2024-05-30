@@ -4,9 +4,12 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    signOut
+    signOut,
+    sendPasswordResetEmail,
+    verifyPasswordResetCode,
+    confirmPasswordReset
 } from 'firebase/auth';
-import { auth } from '../firebase'; // Ensure this import is correctly pointing to your Firebase config file where auth is initialized
+import { auth } from '../firebase';
 
 // Create a context object
 const AuthContext = createContext();
@@ -45,13 +48,31 @@ export const AuthContextProvider = ({ children }) => {
         return signOut(auth);
     };
 
+    // Function to handle password reset
+    const resetPassword = (email) => {
+        return sendPasswordResetEmail(auth, email);
+    };
+
+    // Function to verify password reset code
+    const verifyPasswordReset = (code) => {
+        return verifyPasswordResetCode(auth, code);
+    };
+
+    // Function to confirm password reset
+    const confirmPasswordResetCode = (code, newPassword) => {
+        return confirmPasswordReset(auth, code, newPassword);
+    };
+
     // Value to be passed to the context provider
     const value = {
         currentUser,
         loading,
         login,
         logout,
-        register
+        register,
+        resetPassword,
+        verifyPasswordReset,
+        confirmPasswordResetCode
     };
 
     return (

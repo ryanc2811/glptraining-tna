@@ -3,7 +3,7 @@ import { Grid, Paper, TextField, Button, Typography, Box} from '@mui/material';
 
 import { useNavigate } from "react-router-dom";
 import imagePath from '../../images/register-image.jpg'; // Adjust the path accordingly
-import logoImage from '../../images/logo_whitetab.svg';
+import logoImage from "../../images/RGB-Logo-digital use.png";
 
 import InitialQuestions from './InitialQuestions';
 function Questionnaire() {

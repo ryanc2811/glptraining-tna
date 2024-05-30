@@ -6,6 +6,8 @@ import Register from './components/Register';
 import PrivacyPolicy from './components/RegisterForm/PrivacyPolicy';
 import GDPRStatement from './components/RegisterForm/GDPRStatement';
 import Login from './components/Login';
+import ForgotPassword from './components/ForgotPassword';
+import CompletePasswordReset from './components/CompletePasswordReset';
 import ScenarioQuestion from './components/Questionnaire/ScenarioQuestion';
 import Results from './components/Questionnaire/Results';
 import AuthContextProvider from './contexts/AuthContext';
@@ -20,6 +22,8 @@ function App() {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" component={CompletePasswordReset} />
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
           <Route path="/" element={<Questionnaire/>}/>
           <Route path="/results/:resultId" element={<Results />} />
           <Route path="/scenario-questions" element={<ScenarioQuestion/>}/>
