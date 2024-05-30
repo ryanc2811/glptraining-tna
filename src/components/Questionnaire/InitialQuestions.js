@@ -77,7 +77,7 @@ function InitialQuestions({ onComplete }) {
 
         const user_profile = {
           new_user_profile: {
-            dev_areas_str: formData.development_areas.join(" "),
+            dev_areas_str: formData.development_areas,
             business_area: formData.business_area
           },
         };

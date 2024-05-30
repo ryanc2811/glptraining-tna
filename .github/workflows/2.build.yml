@@ -61,15 +61,3 @@ jobs:
           echo "Starting Docker system cleanup..."
           docker system prune -a -f
           echo "Docker system cleanup completed."
-
-      - name: Show disk usage after Docker cleanup
-        run: df -h
-
-      - name: Clean up workspace
-        run: |
-          echo "Cleaning up workspace..."
-          rm -rf /home/ryanmvc2811/actions-runner/_work/*
-          echo "Workspace cleanup completed."
-
-      - name: Show final disk usage
-        run: df -h
