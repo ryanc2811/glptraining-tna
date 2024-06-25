@@ -77,7 +77,7 @@ function Login() {
       <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
           <Box justify="space-between"
             sx={{
-              my: { xs: 5, sm: 5, md:18},
+              my: { xs: 5, sm: 5, md:14},
               mx:{ xs: 2, sm: 5, md:20},
               display: 'flex',
               flexDirection: 'column',
