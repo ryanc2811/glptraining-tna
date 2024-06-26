@@ -60,22 +60,7 @@ const ScenarioQuestion = () => {
 
       const user_id= currentUser ? currentUser.uid : null;
 
-      /*
-      const userResponses = questions.map((question, index) => ({
-        business_area_id: question.business_area_id,
-        question_id: question.id, // Ensure that question ID is available in the `questions` object
-        response: ratings[index],
-        user_id: user_id,
-        user_tna: userTnaId,  // Assuming `user_tna` is the same as `userTnaId` or has been provided elsewhere
-        weightage: 5
-      }));
-
-      // Store each response in Firestore
-      userResponses.forEach(async response => {
-        await db.collection('user_responses').add(response);
-      });
-
-    */
+      
       // Prepare data for the API call
     const userProfile = questions.map((question, index) => ({
       business_area_id: question.business_area_id,

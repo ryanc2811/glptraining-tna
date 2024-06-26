@@ -27,14 +27,15 @@ const Results = () => {
         const skillsToImprove = data.skills_to_improve.map(skill => skill.replace(/_/g, ' '));
         const topSkills = data.top_skills.map(skill => skill.replace(/_/g, ' '));
 
-      // Filter out duplicates, prioritizing skills to improve
-      const filteredTopSkills = topSkills.filter(skill => !skillsToImprove.includes(skill));
-      
+      // Remove duplicates and prioritize skills to improve
+      const uniqueSkillsToImprove = [...new Set(skillsToImprove)];
+      const uniqueTopSkills = [...new Set(topSkills)].filter(skill => !uniqueSkillsToImprove.includes(skill));
+
       setSkills({
-        topSkills: filteredTopSkills.slice(0, 3),
-        skillsToImprove: skillsToImprove.slice(0, 3),
-        allTopSkills: filteredTopSkills,
-        allSkillsToImprove: skillsToImprove
+        topSkills: uniqueTopSkills.slice(0, 3),
+        skillsToImprove: uniqueSkillsToImprove.slice(0, 3),
+        allTopSkills: uniqueTopSkills,
+        allSkillsToImprove: uniqueSkillsToImprove
       });
         setIsLoading(false);
       } else {
@@ -100,7 +101,7 @@ const Results = () => {
          
          <Grid container spacing={2}>
          <Grid item xs={12}  md={6}lg={6}>
-        <Typography variant="h6" sx={{ mt: 4, mb: 2 ,fontWeight:'bold' }}>Top 3 Skills</Typography>
+        <Typography variant="h6" sx={{ mt: 4, mb: 2 ,fontWeight:'bold' }}>Top Skills</Typography>
         
           {skills.topSkills.map((skill, index) => (
             <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1, bgcolor: 'primary.main', borderRadius: '10px', p: 1 }}>

@@ -13,7 +13,10 @@ function BusinessAreaQuestion({ formData, setFormData, error }) {
     const fetchBusinessAreas = async () => {
       setIsLoading(true);
       const querySnapshot = await getDocs(collection(db, "business_areas"));
-      setBusinessAreas(querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      const activeBusinessAreas = querySnapshot.docs
+        .filter(doc => doc.data().active)
+        .map(doc => ({ ...doc.data(), id: doc.id }));
+      setBusinessAreas(activeBusinessAreas);
       setIsLoading(false);
     };
     fetchBusinessAreas();
