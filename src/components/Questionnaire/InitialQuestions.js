@@ -39,20 +39,25 @@ function InitialQuestions({ onComplete }) {
     }
   }, [currentUser, navigate]);
 
+  useEffect(() => {
+    if (formData.user_tna_id) {
+      generateQuestions();
+    }
+  }, [formData.user_tna_id]);
+
   const createUserTNA = async () => {
     setIsLoading(true);
     try {
-      /*const docRef = await addDoc(collection(db, 'user_tna'), {
+      const docRef = await addDoc(collection(db, 'user_tna'), {
         user_id: formData.user_id,
         upskill_option: formData.upskill_option,
         development_areas: formData.development_areas,
         industry_preference: formData.industry_preference,
         business_area: formData.business_area,
         date_started: serverTimestamp(),
-      });*/
-      setFormData({ ...formData, user_tna_id: 'docRef.id' });
-      setIsLoading(false);
-      generateQuestions();
+      });
+      console.log(docRef.id);
+      setFormData((prevFormData) => ({ ...prevFormData, user_tna_id: docRef.id }));
     } catch (error) {
       console.error("Failed to create TNA: ", error);
       setIsLoading(false);
@@ -95,6 +100,7 @@ function InitialQuestions({ onComplete }) {
         const questions = await fetchAllQuestionsDetails(questionIds.recommended_questions); 
         setIsLoading(false);
 
+        console.log(formData.user_tna_id);
         // Call onComplete when all questions are fetched
         onComplete(questions, formData.business_area_id, formData.user_tna_id);
         

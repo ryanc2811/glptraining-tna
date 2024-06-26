@@ -9,6 +9,7 @@ function Questionnaire() {
   const [error, setError] = useState('');
 
   const handleComplete = (questions, businessAreaId, userTnaId) => {
+    console.log(userTnaId);
     navigate('/scenario-questions', {
         state: {
             questions: questions.filter(q => q !== undefined),
