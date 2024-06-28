@@ -6,7 +6,7 @@ import StepThree from './TermsStep';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { db } from '../../firebase'; 
-import { doc,setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 const steps = ['Account Setup', 'Employment Details', 'Terms & Conditions'];
 
 function RegisterForm() {
@@ -94,18 +94,18 @@ function RegisterForm() {
         jobRole: formData.jobRole,
         agreedToPrivacy: formData.agreedToPrivacy,
         agreedToTerms: formData.agreedToTerms,
-        user_id:userId
-
+        user_id: userId
       });
       navigate('/'); // Navigate after successful registration and data saving
     } catch (error) {
       setError(error.message);
     }
   };
+
   function getStepContent(stepIndex) {
     switch (stepIndex) {
       case 0:
-        return <StepOne formData={formData} setFormData={setFormData} />;
+        return <StepOne formData={formData} setFormData={setFormData} error={error} />;
       case 1:
         return <StepTwo formData={formData} setFormData={setFormData} />;
       case 2:
@@ -126,7 +126,6 @@ function RegisterForm() {
       </Stepper>
       <div>
         {activeStep === steps.length ? (
-          
           <div>
             {/*Redirect to login after account created*/}
             <Typography>All steps completed - you&apos;re finished</Typography>

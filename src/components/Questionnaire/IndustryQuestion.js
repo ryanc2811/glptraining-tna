@@ -55,7 +55,7 @@ function IndustryQuestion({ formData, setFormData,error }) {
             <Box
                 sx={{
                     overflowY: 'auto', // Enable vertical scroll
-                    maxHeight: { xs: '300px', sm: '400px', md: '300px' }, // Adjust this value based on your needs
+                    maxHeight: { xs: '340px', sm: '340px', md: '340px' }, // Adjust this value based on your needs
                     width: { xs: '90%', sm: '40%', md: '70%' },
                     padding: '10px',
                 }}

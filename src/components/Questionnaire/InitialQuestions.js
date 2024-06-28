@@ -136,12 +136,18 @@ const fetchAllQuestionsDetails = async (questionIds) => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", height:'80vh'}}>
-                <CircularProgress sx={{mx:2}} />
-                <Typography variant="h3" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem'}, color: '#001A54' }}>
-          GENERATING QUESTIONS...
+      <Box sx={{ display: "flex", alignItems: "center", height: '80vh', flexDirection: 'column', justifyContent: 'center' }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <CircularProgress sx={{ mr: 2 }} />
+        <Typography variant="h3" sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' }, color: '#001A54' }}>
+          Analysing Results...
         </Typography>
-              </Box>
+      </Box>
+      <Typography variant="h6" sx={{ fontSize: { xs: '0.5rem', sm: '0.5rem', md: '0.5rem' }, color: '#001A54', textAlign: 'left' }}>
+        This may take some time...
+      </Typography>
+    </Box>
+              
     );
   }
 

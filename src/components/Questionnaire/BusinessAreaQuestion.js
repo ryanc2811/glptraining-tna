@@ -53,7 +53,7 @@ function BusinessAreaQuestion({ formData, setFormData, error }) {
           <Box
             sx={{
               overflowY: 'auto',
-              maxHeight: { xs: '300px', sm: '400px', md: '300px' },
+              maxHeight: { xs: '340px', sm: '340px', md: '340px' },
               width: { xs: '90%', sm: '40%', md: '70%' },
               padding: '10px',
             }}

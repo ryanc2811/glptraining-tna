@@ -7,6 +7,8 @@ import {
   Button,
   Typography,
   Grid,
+  Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 
 import LinearProgressWithLabel from "../LinearProgressWithLabel"; // Adjust the import path as needed
@@ -22,8 +24,17 @@ const ScenarioQuestion = () => {
   const [currentQuestion, setCurrentQuestion] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [ratings, setRatings] = useState(Array(questions.length).fill(null)); // Initialize an array to hold ratings for all questions
+  const [ratings, setRatings] = useState(Array(questions.length).fill(null)); // Initialise an array to hold ratings for all questions
   const { currentUser } = useAuth();
+  const [openTooltip, setOpenTooltip] = useState(null);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const ratingDescriptions = [
+    "1 - Little to no knowledge",
+    "2 - Basic understanding",
+    "3 - Intermediate proficiency",
+    "4 - Advanced proficiency",
+    "5 - Expert knowledge"
+  ];
 
   useEffect(() => {
     if (!currentUser) {
@@ -37,6 +48,8 @@ const ScenarioQuestion = () => {
       // Update progress each time a new question is fetched
       const newValue = ((currentQuestionIndex + 1) / questions.length) * 100;
       setProgress(newValue);
+      // Reset tooltip state when moving to a new question
+      setOpenTooltip(null);
     } else {
       setIsLoading(false);
     }
@@ -46,6 +59,7 @@ const ScenarioQuestion = () => {
     const updatedRatings = [...ratings];
     updatedRatings[currentQuestionIndex] = rating;
     setRatings(updatedRatings);
+    
   };
 
   const handleNext = async() => {
@@ -102,60 +116,154 @@ const ScenarioQuestion = () => {
     }
   };
 
-  return (
-    <Grid
-    container
-    component="main"
-    sx={{
-      height: { xs: "90vh", sm: "100vh", md: "100vh" },
-      position: "relative",
-      padding: { md: "2vh" },
-    }}
-  >
-    <MyCarousel></MyCarousel>
-      <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
-        <Box
-          sx={{
-            my: { xs: 5, sm: 5, md: 5 },
-            mx: { xs: 2, sm: 5, md: 15 },
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "left",
-          }}
-        >
-          <Typography variant="body2">Results Progress</Typography>
-          <LinearProgressWithLabel value={progress} />
-          {isLoading ? (
-            <CircularProgress />
-          ) : (
-            <>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 4, mb: 2 }}>
-                <Box sx={{ width: 40, height: 40, backgroundColor: "primary.main", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "common.white", marginRight: 2, mt: 2 }}>
-                  <Typography variant="subtitle1">{currentQuestionIndex + 1}</Typography>
-                </Box>
-                <Typography sx={{ mt: 2 }} variant="h2" component="h1">Scenario</Typography>
-              </Box>
-              <Typography variant="body1">{currentQuestion.scenario}</Typography>
-              <Typography sx={{ mt: 2 }} variant="h3" component="h1" gutterBottom>Question</Typography>
-              <Typography variant="body2">{currentQuestion.text}</Typography>
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                <Typography sx={{ my: 2, color: "#001A54", fontWeight: "bold" }} variant="h4">Rank your ability</Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <Button key={rating} variant={ratings[currentQuestionIndex] === rating ? "contained" : "outlined"} onClick={() => handleRating(rating)} sx={{ mx: 0.5, height: "50px", width: "50px", fontSize: "1rem", fontWeight: "bold", padding: "10px 16px", textTransform: "none" }}>{rating}</Button>
-                ))}
-              </Box>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Button color="inherit" disabled={currentQuestionIndex === 0} onClick={handleBack} sx={{ mr: 1 }}>Back</Button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button variant="contained" color="primary" onClick={handleNext} disabled={ratings[currentQuestionIndex] === null}>{currentQuestionIndex === questions.length - 1 ? "Finish" : "Next"}</Button>
-              </Box>
-            </>
-          )}
-        </Box>
-      </Grid>
-    </Grid>
+  const handleTooltipOpen = (rating) => {
+    if (isMobile) {
+      setOpenTooltip(openTooltip === rating ? null : rating);
+      handleRating(rating);
+    }
+  };
+
+ return (
+  <Grid
+  container
+  component="main"
+  sx={{
+    height: { xs: "90vh", sm: "100vh", md: "100vh" },
+    position: "relative",
+    padding: { md: "2vh" },
+  }}
+>
+  <MyCarousel />
+  <Grid item xs={12} sm={12} md={7} component={Paper} elevation={6} square>
+    <Box
+      sx={{
+        my: { xs: 5, sm: 5, md: 5 },
+        mx: { xs: 2, sm: 5, md: 15 },
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "left",
+      }}
+    >
+      <Typography variant="body2">Results Progress</Typography>
+      <LinearProgressWithLabel value={progress} />
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Box sx={{ display: "flex", alignItems: "center", mt: 4, mb: 2 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                backgroundColor: "primary.main",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "common.white",
+                marginRight: 2,
+                mt: 2,
+              }}
+            >
+              <Typography variant="subtitle1" sx={{color:'white'}}>
+                {currentQuestionIndex + 1}
+              </Typography>
+            </Box>
+            <Typography sx={{ mt: 2 }} variant="h2" component="h1">
+              Scenario
+            </Typography>
+          </Box>
+          <Typography variant="body1">{currentQuestion.scenario}</Typography>
+          <Typography
+            sx={{ mt: 2 }}
+            variant="h3"
+            component="h1"
+            gutterBottom
+          >
+            Question
+          </Typography>
+          <Typography variant="body2">{currentQuestion.text}</Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Typography
+              sx={{ my: 2, color: "#001A54", fontWeight: "bold" }}
+              variant="h4"
+            >
+              Rank your ability
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            {[1, 2, 3, 4, 5].map((rating, index) => (
+              <Tooltip
+                key={rating}
+                title={ratingDescriptions[index]}
+                open={isMobile ? openTooltip === rating : undefined}
+                onOpen={() => handleTooltipOpen(rating)}
+                onClose={() => handleTooltipOpen(rating)}
+              >
+                <Button
+                  variant={
+                    ratings[currentQuestionIndex] === rating
+                      ? "contained"
+                      : "outlined"
+                  }
+                  onClick={() => {
+                    if (isMobile) {
+                      handleTooltipOpen(rating);
+                    } else {
+                      handleRating(rating);
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    if (!isMobile) {
+                      setOpenTooltip(rating);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (!isMobile) {
+                      setOpenTooltip(null);
+                    }
+                  }}
+                  sx={{
+                    mx: 0.5,
+                    height: "50px",
+                    width: "50px",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    padding: "10px 16px",
+                    textTransform: "none",
+                  }}
+                >
+                  {rating}
+                </Button>
+              </Tooltip>
+            ))}
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <Button
+              color="inherit"
+              disabled={currentQuestionIndex === 0}
+              onClick={handleBack}
+              sx={{ mr: 1 }}
+            >
+              Back
+            </Button>
+            <Box sx={{ flex: "1 1 auto" }} />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
+              disabled={ratings[currentQuestionIndex] === null}
+            >
+              {currentQuestionIndex === questions.length - 1
+                ? "Finish"
+                : "Next"}
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  </Grid>
+</Grid>
   );
 };
 
