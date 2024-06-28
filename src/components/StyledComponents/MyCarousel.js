@@ -8,8 +8,8 @@ import 'swiper/css/navigation';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import logoImage from "../../images/RGB-Logo-digital use.png";
 import imagePath1 from '../../images/scenario-question-img.jpg'; // Adjust the path accordingly
-import imagePath2 from '../../images/login-image.jpg'; // Adjust the path accordingly
-import imagePath3 from '../../images/register-image.jpg'; // Adjust the path accordingly
+import imagePath2 from '../../images/woman-working-laptop-side-view.jpg'; // Adjust the path accordingly
+import imagePath3 from '../../images/smiling-middle-aged-man-using-tablet-street-cafe.jpg'; // Adjust the path accordingly
 
 
 const MyCarousel = () => {
