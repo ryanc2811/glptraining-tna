@@ -15,17 +15,23 @@ def predict_courses(user_responses):
     # Encode the user responses
     user_encoded = encoder.transform(user_df[['business_area_id', 'skills', 'proficiency']])
     
-    # Predict courses
+    # Get predictions (probability scores for each course)
     predictions = model.predict(user_encoded)
+
+    # Sum the probabilities for each course to get a relevance score
+    relevance_scores = predictions.sum(axis=0)
+
+    # Define a threshold for relevance (e.g., courses with a relevance score above a certain threshold)
+    threshold = 0.1  # Adjust based on your requirements
+
+    # Get indices of courses above the threshold
+    relevant_indices = np.where(relevance_scores > threshold)[0]
+
+    # Decode these indices back to course IDs
+    relevant_courses = label_encoder.inverse_transform(relevant_indices)
+
+    # Ensure only unique courses are included
+    unique_relevant_courses = np.unique(relevant_courses)
     
-    # Get the index of the highest probability class for each example
-    predicted_labels = np.argmax(predictions, axis=1)
-    
-    # Decode these labels back to course IDs
-    predicted_courses = label_encoder.inverse_transform(predicted_labels)
-    
-    # Use numpy.unique to get only unique courses
-    unique_predicted_courses = np.unique(predicted_courses)
-    
-    return unique_predicted_courses.tolist()
+    return unique_relevant_courses.tolist()
 

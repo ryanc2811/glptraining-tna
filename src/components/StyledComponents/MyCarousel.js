@@ -15,8 +15,8 @@ import imagePath3 from '../../images/register-image.jpg'; // Adjust the path acc
 const MyCarousel = () => {
   const carouselItems = [
     { image: imagePath1, text: "Find Your Path" },
-    { image: imagePath2, text: "Make Smarter Decisions" },
-    { image: imagePath3, text: "Upskill Your Career" }
+    { image: imagePath2, text: "Build Your Future" },
+    { image: imagePath3, text: "Craft Your Career" }
   ];
 
 
