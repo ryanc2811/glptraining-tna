@@ -9,11 +9,10 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import logoImage from "../../images/RGB-Logo-digital use.png";
 import imagePath1 from '../../images/scenario-question-img.jpg'; // Adjust the path accordingly
 import imagePath2 from '../../images/woman-working-laptop-side-view.jpg'; // Adjust the path accordingly
-<<<<<<< HEAD
+
 import imagePath3 from '../../images/man_in_coffee_shop.jpg'; // Adjust the path accordingly
-=======
-import imagePath3 from '../../images/smiling-middle-aged-man-using-tablet-street-cafe.jpg'; // Adjust the path accordingly
->>>>>>> ca2f67359ad9a9d164147dd5e2d4fa5b09ad5056
+
+
 
 
 const MyCarousel = () => {
